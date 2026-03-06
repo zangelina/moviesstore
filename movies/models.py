@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Movie(models.Model):
     id = models.AutoField(primary_key=True)
@@ -22,3 +23,18 @@ class Review(models.Model):
         return str(self.id) + ' - ' + self.movie.name
 
 # Create your models here.
+
+class Rating(models.Model):
+    id = models.AutoField(primary_key=True)
+    value = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='movie_ratings')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['movie', 'user'], name='unique_user_movie_rating')
+        ]
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.name} - {self.value}"
