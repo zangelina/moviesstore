@@ -9,6 +9,65 @@
         <hr />
         <p><b>Description:</b> {{ template_data.movie.description }}</p>
         <p><b>Price:</b> ${{ template_data.movie.price }}</p>
+
+        <div class="card shadow-sm p-3 mb-4 rounded">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Ratings</h5>
+
+            <div class="rating-summary-row mb-3">
+              <div class="rating-summary-label"><b>Average rating:</b></div>
+              <div class="rating-summary-content d-flex align-items-center gap-2 flex-wrap">
+                <div class="rating-display-stars" aria-hidden="true">
+                  {% for rating_value in template_data.rating_options %}
+                    <span class="rating-display-star {% if template_data.average_rating and template_data.average_rating >= rating_value %}is-filled{% endif %}">★</span>
+                  {% endfor %}
+                </div>
+                <span>
+                  {% if template_data.average_rating %}
+                    {{ template_data.average_rating|floatformat:1 }}/5
+                  {% else %}
+                    No ratings yet
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+
+            <div class="rating-summary-row mb-3">
+              <div class="rating-summary-label"><b>Total ratings:</b></div>
+              <div class="rating-summary-content">{{ template_data.ratings_count }}</div>
+            </div>
+
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'movies.create_rating' id=template_data.movie.id %}">
+              {% csrf_token %}
+              <div class="rating-summary-row mb-3">
+                <div class="rating-summary-label"><b>Your rating:</b></div>
+                <div class="rating-summary-content">
+                  <div class="star-rating-input">
+                    <input type="radio" id="star5" name="rating" value="5" {% if template_data.user_rating and template_data.user_rating.value == 5 %}checked{% endif %}>
+                    <label for="star5" title="5 stars">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" {% if template_data.user_rating and template_data.user_rating.value == 4 %}checked{% endif %}>
+                    <label for="star4" title="4 stars">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" {% if template_data.user_rating and template_data.user_rating.value == 3 %}checked{% endif %}>
+                    <label for="star3" title="3 stars">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" {% if template_data.user_rating and template_data.user_rating.value == 2 %}checked{% endif %}>
+                    <label for="star2" title="2 stars">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" {% if template_data.user_rating and template_data.user_rating.value == 1 %}checked{% endif %}>
+                    <label for="star1" title="1 star">★</label>
+                  </div>
+                </div>
+              </div>
+              <div class="rating-submit-row">
+                <button type="submit" class="btn bg-dark text-white">
+                  {% if template_data.user_rating %}Update Rating{% else %}Submit Rating{% endif %}
+                </button>
+              </div>
+            </form>
+            {% else %}
+            <p class="mb-0">Please <a href="{% url 'accounts.login' %}">log in</a> to rate this movie.</p>
+            {% endif %}
+          </div>
+        </div>
         <p class="card-text">
           <form method="post" action="{% url 'cart.add' id=template_data.movie.id %}">
             <div class="row">
