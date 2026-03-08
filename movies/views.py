@@ -21,6 +21,8 @@ def index(request):
 
 def show(request, id):
     movie = Movie.objects.get(id=id)
+    movie.view_count += 1
+    movie.save()
     reviews = Review.objects.filter(movie=movie)
     rating_summary = Rating.objects.filter(movie=movie).aggregate(avg_rating=Avg('value'))
     user_rating = None
@@ -117,7 +119,7 @@ def popularity_map(request):
         top_movies = list(
     Item.objects
     .filter(order__region=region)
-    .values('movie__name')
+    .values('movie__name', 'movie__view_count')
     .annotate(total=Sum('quantity'))
     .order_by('-total')[:3]
 )

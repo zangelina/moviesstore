@@ -20,7 +20,7 @@
     if (region.movies.length > 0) {
         popupContent += 'Top Movies:<ol>';
         region.movies.forEach(function(m) {
-            popupContent += '<li>' + m.movie__name + ' (' + m.total + ' sold)</li>';
+            popupContent += '<li>' + m.movie__name + ' (' + m.total + ' sold, ' + m.movie__view_count + ' views)</li>';
         });
         popupContent += '</ol>';
     } else {
