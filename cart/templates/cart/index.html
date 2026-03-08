@@ -36,8 +36,18 @@
       <div class="text-end">
         <a class="btn btn-outline-secondary mb-2"><b>Total to pay:</b> ${{ template_data.cart_total }}</a>
         {% if template_data.movies_in_cart|length > 0 %}
-        <a href="{% url 'cart.purchase' %}" class="btn bg-dark text-white mb-2">Purchase
-        </a>
+        <form method="POST" action="{% url 'cart.purchase' %}">
+          {% csrf_token %}
+          <select name="region" class="form-control mb-2">
+            <option value="north_america">North America</option>
+            <option value="south_america">South America</option>
+            <option value="europe">Europe</option>
+            <option value="africa">Africa</option>
+            <option value="asia">Asia</option>
+            <option value="oceania">Oceania</option>
+          </select>
+          <button type="submit" class="btn bg-dark text-white mb-2">Purchase</button>
+        </form>
         <a href="{% url 'cart.clear' %}">
           <button class="btn btn-danger mb-2">
             Remove all movies from Cart

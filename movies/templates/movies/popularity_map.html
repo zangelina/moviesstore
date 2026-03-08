@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Local Popularity Map</h2>
+    <p>Click on a region to see the trending movies there!</p>
+    <div id="map" style="height: 550px; border-radius: 10px;"></div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  const map = L.map('map').setView([20, 0], 2);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap contributors'}).addTo(map);
+
+  const mapData = JSON.parse('{{ template_data.map_data|escapejs }}');
+  mapData.forEach(function(region) {
+    let popupContent = '<b>' + region.region + '</b><br>';
+    if (region.movies.length > 0) {
+        popupContent += 'Top Movies:<ol>';
+        region.movies.forEach(function(m) {
+            popupContent += '<li>' + m.movie__name + ' (' + m.total + ' sold)</li>';
+        });
+        popupContent += '</ol>';
+    } else {
+        popupContent += '<i>No purchases yet in this region.</i>';
+    }
+
+    L.marker(region.coords)
+        .addTo(map)
+        .bindPopup(popupContent);
+});
+  </script>
+  {% endblock content %}

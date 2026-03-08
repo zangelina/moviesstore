@@ -2,12 +2,19 @@ from django.db import models
 from movies.models import Movie
 from django.contrib.auth.models import User
 
+REGIONS = [('north_america', 'North America'), ('south_america', 'South America'),
+           ('europe', 'Europe'),
+           ('africa', 'Africa'),
+            ('asia', 'Asia'),
+            ('oceania', 'Oceania'),]
+
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
     total = models.IntegerField()
     date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User,
         on_delete=models.CASCADE)
+    region = models.CharField(max_length=50, choices=REGIONS, default='north_america')
     def __str__(self):
         return str(self.id) + ' - ' + self.user.username
     

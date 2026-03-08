@@ -41,6 +41,7 @@ def purchase(request):
     order = Order()
     order.user = request.user
     order.total = cart_total
+    order.region = request.POST.get('region', 'north_america') # defaults to NA
     order.save()
     for movie in movies_in_cart:
         item = Item()

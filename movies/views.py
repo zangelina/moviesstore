@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Review, Rating
 from django.contrib.auth.decorators import login_required
-from django.db.models import Avg
+from django.db.models import Avg, Sum
+from cart.models import Item
+import json
 
 def index(request):
     search_term = request.GET.get('search')
@@ -98,3 +100,30 @@ def create_rating(request, id):
                 defaults={'value': int(rating_value)}
             )
     return redirect('movies.show', id=id)
+
+def popularity_map(request):
+    REGION_COORDS = {
+        'north_america': [54.5260, -105.2551],
+        'south_america': [-8.7832, -55.4915],
+        'europe': [54.5260, 15.2551],
+        'africa': [-8.7832, 34.5085],
+        'asia': [34.0479, 100.6197],
+        'oceania': [-22.7359, 140.0188],
+    }
+
+    regions = ['north_america', 'south_america', 'europe', 'africa', 'asia', 'oceania']
+    map_data = []
+    for region in regions:
+        top_movies = list(
+    Item.objects
+    .filter(order__region=region)
+    .values('movie__name')
+    .annotate(total=Sum('quantity'))
+    .order_by('-total')[:3]
+)
+        map_data.append({'region': region.replace('_', ' ').title(), 'coords': REGION_COORDS[region], 'movies': list(top_movies),})
+
+    template_data = {}
+    template_data['title'] = 'Local Popularity Map'
+    template_data['map_data'] = json.dumps(map_data)
+    return render(request, 'movies/popularity_map.html', {'template_data': template_data})
