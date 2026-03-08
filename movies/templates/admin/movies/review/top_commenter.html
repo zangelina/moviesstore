@@ -1,0 +1,36 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Top commenter</h1>
+
+{% if top_commenter %}
+    <div style = "margin-bottom: 25px;">
+        <h2>User with the most comments</h2>
+        <p><strong>Username:</strong> {{ top_commenter.user__username }}</p>
+        <p><strong>Total Comments:</strong> {{ top_commenter.total_comments }}</p>
+    </div>
+
+    <h2>All Users by Comment Count</h2>
+    <table border = "1" cellpadding = "8" style = "border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Total Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in review_counts %}
+            <tr>
+                <td>{{ row.user__username }}</td>
+                <td>{{ row.total_comments }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No comments have been poster yet.</p>
+{% endif %}
+
+<br>
+<a href = "/admin/movies/review">Back to Reviews Admin</a>
+{% endblock %}
