@@ -5,6 +5,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
 
 @login_required
 def logout(request):
@@ -51,3 +53,16 @@ def orders(request):
     template_data['title'] = 'Orders'
     template_data['orders'] = request.user.order_set.all()
     return render(request, 'accounts/orders.html', {'template_data': template_data})
+
+@login_required
+def admin_top_purchaser(request):
+    if not request.user.is_staff:
+        return redirect('home.index')
+    
+    top_user = ( User.objects.annotate(total_movies_purchased=Coalesce(Sum('order__movies'), 0)).order_by('-total_movies_purchased', 'username').first() )
+    
+    template_data = {}
+    template_data['title'] = 'Top Purchaser'
+    template_data['top_user'] = top_user
+    
+    return render(request, 'accounts/admin_top_purchaser.html', {'template_data': template_data})

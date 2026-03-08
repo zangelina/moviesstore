@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1>Top Purchaser</h1>
+    {% if top_user and top_user.total_movies > 0 %}
+        <p><strong>Username:</strong> {{ top_user.username }}</p>
+        <p><strong>Total Movies Purchased:</strong> {{ top_user.total_movies }}</p>
+
+        <h2 style="margin-top: 24px;">Purchase List</h2>
+        <table style="border-collapse:collapse; width: 100%; margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Order ID</th>
+                    
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Movie</th>
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in purchase_items %}
+                <tr>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ item.order.id }}</td>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ item.movie }}</td>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ item.quantity }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="padding:8px;">No purchases found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 style="margin-top: 32px;">All Users Ranked by Movie Purchases</h2>
+
+        <table style="border-collapse:collapse; width: 100%; margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Rank</th>
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Username</th>
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Total Movies Purchased</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in ranked_users %}
+                <tr>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ forloop.counter }}</td>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ user.username }}</td>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ user.total_movies }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 style="margin-top: 32px;">All Users Ranked by Number of Orders</h2>
+        <table style="border-collapse:collapse; width: 100%; margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Rank</th>
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Username</th>
+                    <th style= "text-align: left; padding: 8px; border-bottom: 1px solid #ccc">Total Orders</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in ranked_by_order %}
+                <tr>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ forloop.counter }}</td>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ user.username }}</td>
+                    <td style="padding:8px; border-bottom:1px; solid #eee;">{{ user.total_orders }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <p>No purchases found.</p>
+    {% endif %}
+
+    <br>
+    <a href="/admin/cart/order/" class="button"
+        style="background:#417690; color:white; padding:8px 12px; border-radius:4px; text-decoration:none;">
+        Back to Orders
+</a>
+</div>
+{% endblock content %}
